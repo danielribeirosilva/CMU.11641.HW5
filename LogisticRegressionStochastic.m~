@@ -21,8 +21,8 @@ Xtest = [ones(size(Xtest,1),1) Xtest];
 alpha = 0.1;
 C = 0.001;
 convPrecision = 0.1;
-maxT = 15;
-adaptativeLearningRate = 0.95;
+maxT = 25;
+adaptativeLearningRate = 1.0;
 FV_dimension = size(Xtrain,2);
 labels = unique(Ytrain);
 predictions = zeros(size(Ytest,1),size(labels,1));
@@ -44,6 +44,7 @@ for i_label = 1:length(labels)
     convValue = convPrecision + 1;
 
     T = 0;
+    %tic;
     while T < maxT && convValue > convPrecision
         
         T = T + 1;
@@ -79,14 +80,14 @@ for i_label = 1:length(labels)
 
         fprintf('T=%i (alpha=%f): %f %f \n', T, currentAlpha, convValue, currentValue);
         
-        %Adaptative Learning
-        %learning rate decreases with time: the closer we are to
-        %the global max/min, the lower we want the learning rate to be
+        %Adaptative learning
+        %learning rate decreases with time (the closer to the global max/min, the lower we want the learning rate to be)
         if T > 0
            currentAlpha = currentAlpha * adaptativeLearningRate;
         end
 
     end
+    %toc
 
 
     %TESTING

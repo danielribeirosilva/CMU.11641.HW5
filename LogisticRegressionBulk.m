@@ -18,27 +18,28 @@ Xtest = [ones(size(Xtest,1),1) Xtest];
 
 
 Ytrain_temp = zeros(size(Ytrain));
-Ytrain_temp(Ytrain==1) = 1;
+Ytrain_temp(Ytrain==7) = 1;
 Ytrain = Ytrain_temp;
 
 Ytest_temp = zeros(size(Ytest));
-Ytest_temp(Ytest==1) = 1;
+Ytest_temp(Ytest==7) = 1;
 Ytest = Ytest_temp;
 
 
 
 %TRAINING
-alpha = 0.1;
+alpha = 20;
 C = 0.001;
 FV_dimension = size(Xtrain,2);
 w = zeros(1, FV_dimension);
 step = zeros(1, FV_dimension);
 lastValue = 0;
 convPrecision = 0.01;
+convValue = convPrecision + 1;
 
 
 T = 1;
-while true
+while T < 150 && convValue > convPrecision
     
     for i=1:size(Xtrain,1)
         
@@ -68,10 +69,6 @@ while true
     fprintf('%i %f %f\n', T, convValue, currentValue);
 
     T = T + 1;
-
-    if convValue <= convPrecision
-        break;
-    end
     
 end
 
