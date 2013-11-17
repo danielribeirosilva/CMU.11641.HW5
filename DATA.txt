@@ -1,0 +1,3 @@
+train=/Users/daniel/Documents/MATLAB/+SearchEnginesHW5/+Data/citeseer.train.ltc.svm
+test=/Users/daniel/Documents/MATLAB/+SearchEnginesHW5/+Data/citeseer.test.ltc.svm
+c=0.001

@@ -14,15 +14,15 @@ fprintf('loading testing data...\n');
 fprintf('data loaded\n\n');
 
 %Add column of 1's to data
-Xtrain = [ones(size(Xtrain,1),1) Xtrain];
-Xtest = [ones(size(Xtest,1),1) Xtest];
+Xtrain = [(0.01*ones(size(Xtrain,1),1)) Xtrain];
+Xtest = [(0.01*ones(size(Xtest,1),1)) Xtest];
 
 %Model parameters
-alpha = 0.1;
-C = 0.001;
-convPrecision = 0.1;
-maxT = 15;
-adaptativeLearningRate = 0.95;
+C = 0.1;
+alpha = 0.1*0.001/C;
+convPrecision = 0.1*0.001/C;
+maxT = 20;
+adaptativeLearningRate = 1.0;
 FV_dimension = size(Xtrain,2);
 labels = unique(Ytrain);
 predictions = zeros(size(Ytest,1),size(labels,1));
@@ -134,7 +134,8 @@ for i = 1:length(labels)
 end
 
 %total running time
-elapsedTime = toc
+elapsedTime = toc;
+disp(elapsedTime);
 
 %save results
 LogReg.precision = precisionVector;
@@ -151,5 +152,16 @@ LogReg.maxT = maxT;
 LogReg.elapsedTime = elapsedTime;
 
 save LogReg.mat LogReg;
+
+%output .txt file for eval.cpp
+fileID = fopen('eval.txt','w');
+fprintf(fileID,'%i %i\n',[classPrediction'; Ytest']);
+fclose(fileID);
+
+
+
+
+
+
 
 
