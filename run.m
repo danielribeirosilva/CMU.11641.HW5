@@ -9,7 +9,7 @@ dataFilePath = strcat(pwd,'/DATA.TXT');
 %fileLocationTrain = strcat(dir,fileNameTrain);
 %fileLocationTest = strcat(dir,fileNameTest);
 
-% checking to see if my pool is already open
+% checking to see if pool is already open
 if matlabpool('size') == 0 
     matlabpool open
 end
