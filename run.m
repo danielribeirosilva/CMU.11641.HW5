@@ -93,7 +93,7 @@ parfor i_label = 1:length(labels)
         convValue = abs(lastValue - currentValue);
         lastValue = currentValue;
 
-        %fprintf('T=%i (alpha=%f): %f %f \n', T, currentAlpha, convValue, currentValue);
+        fprintf('T=%i (alpha=%f): %f %f \n', T, currentAlpha, convValue, currentValue);
         
         %Adaptative Learning
         %learning rate decreases with time: the closer we are to
@@ -151,7 +151,7 @@ end
 
 %total running time
 elapsedTime = toc;
-%disp(elapsedTime);
+disp(elapsedTime);
 
 %save results
 LogReg.precision = precisionVector;
@@ -168,13 +168,13 @@ LogReg.maxT = maxT;
 LogReg.elapsedTime = elapsedTime;
 
 %output all results as a .mat file
-%save LogReg.mat LogReg;
+save LogReg.mat LogReg;
 
 %output .txt file for eval.cpp
 fileID = fopen('eval.txt','w');
 
 %set test labels to zero
-Ytest = zeros(size(Ytest));
+%Ytest = zeros(size(Ytest));
 
 fprintf(fileID,'%i %i\n',[classPrediction'; Ytest']);
 
