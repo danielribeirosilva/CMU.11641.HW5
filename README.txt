@@ -23,8 +23,4 @@ If you are curious, the scripts for SVM are inside the SVM folder.
 
 If you have any further problems, please contact me at
 
-danielsilva.x10@gmail.com
-or
-drsilva@andrew.cmu.edu
-
 

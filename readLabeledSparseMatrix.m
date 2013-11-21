@@ -1,10 +1,10 @@
-function [X,Y] = readLabeledSparseMatrix (fileLocation)
+function [X,Y] = readLabeledSparseMatrix (fileLocation, FVsize)
 
     
     fid = fopen(fileLocation,'r');
     tline = fgets(fid);
     
-    X = sparse(1,14601);
+    X = sparse(1,FVsize);
     Y = [];
     
     currentI = 1;

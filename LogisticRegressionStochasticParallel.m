@@ -1,16 +1,31 @@
-fileNameTrain = 'citeseer.train.ltc.svm';
-fileNameTest = 'citeseer.test.ltc.svm';
-dir = 'Users/daniel/Documents/MATLAB/+SearchEnginesHW5/+Data/';
-fileLocationTrain = strcat(dir,fileNameTrain);
-fileLocationTest = strcat(dir,fileNameTest);
+dataFilePath = strcat(pwd,'/DATA.TXT');
+[fileLocationTrain,fileLocationTest,C] = readDataFile (dataFilePath);
+
+%IF WISHES TO MANUALLY ENTRING DATA
+%C = 0.0001;
+%fileNameTrain = 'citeseer.train.ltc.svm';
+%fileNameTest = 'citeseer.test.ltc.svm';
+%dir = 'Users/daniel/Documents/MATLAB/+SearchEnginesHW5/+Data/';
+%fileLocationTrain = strcat(dir,fileNameTrain);
+%fileLocationTest = strcat(dir,fileNameTest);
+
+% checking to see if my pool is already open
+if matlabpool('size') == 0 
+    matlabpool open
+end
 
 tic;
 
+%get max FV size
+maxFVSizeTrain = getFVdimension (fileLocationTrain);
+maxFVSizeTest = getFVdimension (fileLocationTest);
+maxFVSize = max([maxFVSizeTrain maxFVSizeTest]);
+
 %Import database
 fprintf('loading training data...\n');
-[Xtrain,Ytrain] = SearchEnginesHW5.readLabeledSparseMatrix (fileLocationTrain);
+[Xtrain,Ytrain] = readLabeledSparseMatrix (fileLocationTrain, maxFVSize);
 fprintf('loading testing data...\n');
-[Xtest,Ytest] = SearchEnginesHW5.readLabeledSparseMatrix (fileLocationTest);
+[Xtest,Ytest] = readLabeledSparseMatrix (fileLocationTest, maxFVSize);
 fprintf('data loaded\n\n');
 
 %Add column of 1's to data
@@ -19,16 +34,14 @@ Xtest = [(0.01*ones(size(Xtest,1),1)) Xtest];
 
 
 %Model parameters
-C = 1;
 alpha = 0.1*0.001/C;
-convPrecision = 0.1*0.001/C;
+convPrecision = min([0.1*0.001/C 0.1]);
 maxT = 15;
 adaptativeLearningRate = 0.9;
 FV_dimension = size(Xtrain,2);
 labels = unique(Ytrain);
 predictions = zeros(size(Ytest,1),size(labels,1));
 
-matlabpool open
 
 %Train one logistic regression model for each class (one vs. rest)
 parfor i_label = 1:length(labels)
@@ -80,7 +93,7 @@ parfor i_label = 1:length(labels)
         convValue = abs(lastValue - currentValue);
         lastValue = currentValue;
 
-        fprintf('T=%i (alpha=%f): %f %f \n', T, currentAlpha, convValue, currentValue);
+        %fprintf('T=%i (alpha=%f): %f %f \n', T, currentAlpha, convValue, currentValue);
         
         %Adaptative Learning
         %learning rate decreases with time: the closer we are to
@@ -108,11 +121,12 @@ precisionVector = zeros(size(labels));
 recallVector = zeros(size(labels));
 F1Vector = zeros(size(labels));
 
+%my own eval function for matlab
 fprintf('Computing Predictions ...\n');
 for i = 1:length(labels)
     
     label = labels(i);
-    fprintf('current label: %i\n', label);
+    %fprintf('current label: %i\n', label);
     
     %true negatives
     a = sum((classPrediction~=label).*(Ytest~=label));
@@ -132,13 +146,12 @@ for i = 1:length(labels)
     recallVector(i,1) = recall;
     F1Vector(i,1) = F1;
 
-    %fprintf('P:%.3f, R:%.3f, A:%.3f \n', precision, recall, accuracy);
     fprintf('P:%.3f, R:%.3f, F1:%.3f \n', precision, recall, F1);
 end
 
 %total running time
 elapsedTime = toc;
-disp(elapsedTime);
+%disp(elapsedTime);
 
 %save results
 LogReg.precision = precisionVector;
@@ -154,11 +167,17 @@ LogReg.alpha = alpha;
 LogReg.maxT = maxT;
 LogReg.elapsedTime = elapsedTime;
 
-save LogReg.mat LogReg;
+%output all results as a .mat file
+%save LogReg.mat LogReg;
 
 %output .txt file for eval.cpp
 fileID = fopen('eval.txt','w');
+
+%set test labels to zero
+Ytest = zeros(size(Ytest));
+
 fprintf(fileID,'%i %i\n',[classPrediction'; Ytest']);
+
 fclose(fileID);
 
 
