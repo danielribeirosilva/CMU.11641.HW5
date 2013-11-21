@@ -28,8 +28,10 @@ FV_dimension = size(Xtrain,2);
 labels = unique(Ytrain);
 predictions = zeros(size(Ytest,1),size(labels,1));
 
+matlabpool open
+
 %Train one logistic regression model for each class (one vs. rest)
-for i_label = 1:length(labels)
+parfor i_label = 1:length(labels)
     
     label = labels(i_label);
     fprintf('\ncurrent label: %i\n', label);
@@ -93,7 +95,7 @@ for i_label = 1:length(labels)
     %TESTING
     currentPred = 1 + exp(-Xtest*w');
     currentPred = bsxfun(@rdivide,1,currentPred);
-    predictions(:,label) = currentPred;
+    predictions(:,i_label) = currentPred;
 
 end
 

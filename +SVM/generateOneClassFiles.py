@@ -5,7 +5,7 @@ Created on Sun Nov 17 01:41:43 2013
 @author: daniel
 """
 
-originFileName = 'train'
+originFileName = 'test'
 orginFileFormat = '.txt'
 originFile = originFileName+orginFileFormat
 

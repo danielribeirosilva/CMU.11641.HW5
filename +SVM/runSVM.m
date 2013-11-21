@@ -6,10 +6,12 @@ binaryFolder = '\+SearchEnginesHW5/+SVM/';
 binaryFolder2 = '+SearchEnginesHW5/+SVM/';
 
 tic;
-currentC = 0.1;
+currentC = 0.0001;
 labels = 1:17;
 
+
 %TRAIN -> GENERATE MODEL
+fprintf('\n%i Generating Models ...\n', size(labels,2));
 for currentClass = labels
     
     command = strcat(binaryFolder,'svm_learn');
@@ -22,9 +24,10 @@ for currentClass = labels
 
 end
 
-fprintf('\n%i Models Generated\n', size(labels,2));
+
 
 %TEST -> GENERATE PROJECTIONS
+fprintf('\nClassifying test data ...\n');
 for currentClass = 1:17
 
     command = strcat(binaryFolder,'svm_classify');
@@ -37,10 +40,11 @@ for currentClass = 1:17
 
 end
 
-fprintf('\nTest data classified\n');
 
-allProjections = [];
+
 %COMPILE RESULTS
+fprintf('\nCompiling results ...\n');
+allProjections = [];
 for currentClass = 1:17
 
     classificationFile = strcat(binaryFolder2,'classification_',num2str(currentC),'_',num2str(currentClass));
@@ -50,8 +54,10 @@ for currentClass = 1:17
     
 end
 
+
 %DO MULTI-CLASS CLASSIFICATION BY USING MAX
 %select model that gives highest projection for given Xi
+fprintf('Computing Predictions ...\n');
 
 [Xtest,Ytest] = SearchEnginesHW5.readLabeledSparseMatrix (testFilePath);
 [maxP, classPrediction] = max(allProjections');
@@ -61,7 +67,6 @@ precisionVector = zeros(size(labels));
 recallVector = zeros(size(labels));
 F1Vector = zeros(size(labels));
 
-fprintf('Computing Predictions ...\n');
 for i = 1:length(labels)
     
     label = labels(i);
